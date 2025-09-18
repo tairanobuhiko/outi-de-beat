@@ -53,6 +53,8 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   const finishGameRef = useRef<(() => Promise<void>) | null>(null);
   const checkAutoMissesRef = useRef<((effectiveTime: number) => void) | null>(null);
   const playbackUpdateHandlerRef = useRef<(status: AVPlaybackStatus) => void>();
+  const fallbackTimerRef = useRef<number | null>(null);
+  const startTimestampRef = useRef<number | null>(null);
 
   useEffect(() => {
     latencyRef.current = latencyOffsetMs;
@@ -166,6 +168,17 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
 
       const position = status.positionMillis ?? 0;
       setPlaybackPosition(position);
+      console.log('DEBUG playback status:', { position, isPlaying: (status as any).isPlaying, didJustFinish: status.didJustFinish });
+
+      // If we had a fallback timer running (because audio was buffering),
+      // stop it once the audio reports a real position/isPlaying.
+      const isPlaying = ((status as unknown) as any).isPlaying ?? false;
+      if (fallbackTimerRef.current !== null && isPlaying) {
+        clearInterval(fallbackTimerRef.current as unknown as number);
+        fallbackTimerRef.current = null;
+        startTimestampRef.current = null;
+        console.log('DEBUG fallback timer cleared; audio is playing');
+      }
       const checker = checkAutoMissesRef.current;
       if (checker) {
         checker(position + latencyRef.current);
@@ -184,6 +197,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
         return;
       }
       const effectiveTime = playbackPosition + latencyRef.current;
+      console.log('DEBUG handleLanePress:', { laneIndex, effectiveTime });
       let bestIndex: number | undefined;
       let bestDelta = Number.POSITIVE_INFINITY;
 
@@ -202,6 +216,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
 
       if (typeof bestIndex === 'number') {
         const judgment = determineJudgment(bestDelta);
+        console.log('DEBUG tap hit:', { bestIndex, bestDelta, judgment });
         applyJudgment(judgment, bestIndex);
       }
     },
@@ -221,6 +236,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
 
     const setup = async () => {
       try {
+        console.log('DEBUG beatmapEntry.module:', beatmapEntry.module);
         const beatmap = parseBeatmap(beatmapEntry.module);
         notesRef.current = beatmap.notes.map((note, index) => ({
           id: `${beatmap.song_id}-${beatmap.difficulty_id}-${index}`,
@@ -230,17 +246,16 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
         }));
         setNotes([...notesRef.current]);
 
-        const { sound } = await Audio.Sound.createAsync(
-          song.audioModule,
-          {
-            shouldPlay: false,
-            progressUpdateIntervalMillis: 16
-          },
-          (status) => playbackUpdateHandlerRef.current?.(status)
-        );
+        const { sound } = await Audio.Sound.createAsync(song.audioModule, {
+          shouldPlay: false,
+          progressUpdateIntervalMillis: 16
+        });
         soundRef.current = sound;
         await sound.setProgressUpdateIntervalAsync(16);
+        // Attach playback handler before allowing the game to start so
+        // playback position updates are received as soon as audio plays.
         sound.setOnPlaybackStatusUpdate(handlePlaybackStatusUpdate);
+        console.log('DEBUG notes loaded:', notesRef.current.length);
         setStatus('ready');
       } catch (error) {
         console.error(error);
@@ -256,6 +271,11 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
       soundRef.current?.stopAsync().catch(() => undefined);
       soundRef.current?.unloadAsync().catch(() => undefined);
       soundRef.current = null;
+      if (fallbackTimerRef.current !== null) {
+        clearInterval(fallbackTimerRef.current as unknown as number);
+        fallbackTimerRef.current = null;
+        startTimestampRef.current = null;
+      }
     };
   }, [song, beatmapEntry]);
 
@@ -263,8 +283,49 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     if (!soundRef.current || status !== 'ready') {
       return;
     }
-    await soundRef.current.playFromPositionAsync(0);
-    setStatus('playing');
+    try {
+      const sound = soundRef.current;
+      console.log('DEBUG startGame: starting playback');
+      const pre = await sound.getStatusAsync();
+      console.log('DEBUG startGame: pre-status', pre);
+  const preIsPlaying = ((pre as unknown) as any).isPlaying ?? false;
+      if (preIsPlaying) {
+        setStatus('playing');
+        return;
+      }
+
+      const res = await sound.playFromPositionAsync(0);
+      console.log('DEBUG startGame: playFromPositionAsync result', res);
+      const post = await sound.getStatusAsync();
+      console.log('DEBUG startGame: post-status', post);
+  const postIsPlaying = ((post as unknown) as any).isPlaying ?? false;
+      if (!postIsPlaying) {
+        console.log('DEBUG startGame: fallback to playAsync');
+        const res2 = await sound.playAsync();
+        console.log('DEBUG startGame: playAsync result', res2);
+      }
+      setStatus('playing');
+      // If audio is buffering and not reporting position, start a fallback timer
+      // to advance playbackPosition so notes will still appear.
+      const finalStatus = await sound.getStatusAsync();
+      const finalIsPlaying = ((finalStatus as unknown) as any).isPlaying ?? false;
+      if (!finalIsPlaying) {
+        console.log('DEBUG startGame: starting fallback timer (audio not reporting isPlaying)');
+        // record timestamp baseline
+        startTimestampRef.current = Date.now();
+        if (fallbackTimerRef.current === null) {
+          fallbackTimerRef.current = setInterval(() => {
+            // advance local playback position based on elapsed wall time
+            const base = startTimestampRef.current ?? Date.now();
+            const elapsed = Date.now() - base;
+            // emulate playbackPosition in ms
+            setPlaybackPosition(elapsed);
+          }, 16) as unknown as number;
+        }
+      }
+    } catch (error) {
+      console.warn('startGame error', error);
+    }
   }, [status]);
 
   useFocusEffect(
@@ -346,7 +407,9 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
       <View
         style={styles.playfield}
         onLayout={(event) => {
-          setLaneHeight(event.nativeEvent.layout.height);
+            const h = event.nativeEvent.layout.height;
+            console.log('DEBUG playfield height:', h);
+            setLaneHeight(h);
         }}
       >
         <View style={styles.laneContainer}>
