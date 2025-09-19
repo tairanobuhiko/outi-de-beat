@@ -89,7 +89,7 @@ function buildSource(songs: Map<string, { meta: any; difficulties: Array<Beatmap
     }
     lines.push('    beatmaps: [');
     for (const beatmap of song.difficulties.sort((a, b) => a.level - b.level)) {
-      const beatmapRequirePath = `require('../../assets/beatmaps/${beatmap.song_id}_${beatmap.difficulty_id}.json')`;
+      const beatmapRequirePath = `require('../../assets/beatmaps/${beatmap.song_id}_${beatmap.difficulty_id}.auto.json')`;
       lines.push('      {');
       lines.push(`        difficultyId: '${beatmap.difficulty_id}',`);
       lines.push(`        difficultyName: '${beatmap.difficulty_name}',`);

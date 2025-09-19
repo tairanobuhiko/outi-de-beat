@@ -29,15 +29,27 @@ export const songManifest: SongManifest = [
         module: require('../../assets/beatmaps/no_mans_world_normal.json'),
       },
       {
+        difficultyId: 'hard_auto',
+        difficultyName: 'むずかしい(自動)',
+        level: 9,
+        module: require('../../assets/beatmaps/no-mans-world_hard_auto.auto.json'),
+      },
+      {
         difficultyId: 'hard',
         difficultyName: 'むずかしい',
         level: 9,
         module: require('../../assets/beatmaps/no_mans_world_hard.json'),
       },
+      {
+        difficultyId: 'extreme_auto',
+        difficultyName: '激ムズ(自動)',
+        level: 12,
+        module: require('../../assets/beatmaps/no-mans-world_extreme_auto.auto.json'),
+      },
     ],
   },
 ];
 
-export const manifestGeneratedAt = '2025-09-19T16:49:39.653Z';
+export const manifestGeneratedAt = '2025-09-19T18:15:02.350Z';
 
 export default songManifest;
