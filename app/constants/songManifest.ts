@@ -9,8 +9,13 @@ export const songManifest: SongManifest = [
     artist: 'outi de beat',
     audioModule: require('../../assets/audio/「no man’s world」音羽-otoha-.caf') as number,
     offsetMs: 0,
-    previewMs: 12000,
     beatmaps: [
+      {
+        difficultyId: 'easy_auto',
+        difficultyName: 'かんたん(自動)',
+        level: 3,
+        module: require('../../assets/beatmaps/no-mans-world_easy_auto.auto.json'),
+      },
       {
         difficultyId: 'easy',
         difficultyName: 'かんたん',
@@ -33,6 +38,6 @@ export const songManifest: SongManifest = [
   },
 ];
 
-export const manifestGeneratedAt = '2025-09-17T15:51:29.774Z';
+export const manifestGeneratedAt = '2025-09-19T16:49:39.653Z';
 
 export default songManifest;

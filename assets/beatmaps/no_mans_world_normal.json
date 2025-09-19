@@ -6,63 +6,1007 @@
   "difficulty_name": "ふつう",
   "level": 6,
   "audio_file": "「no man’s world」音羽-otoha-.caf",
-  "offset_ms": 0,
-  "preview_ms": 12000,
+  "offset_ms": 40,
   "notes": [
-    { "time_ms": 1500, "lane": 0, "type": "tap" },
-    { "time_ms": 2100, "lane": 2, "type": "tap" },
-    { "time_ms": 2700, "lane": 1, "type": "tap" },
-    { "time_ms": 3300, "lane": 3, "type": "tap" },
-    { "time_ms": 3600, "lane": 0, "type": "tap" },
-    { "time_ms": 3900, "lane": 1, "type": "tap" },
-    { "time_ms": 4200, "lane": 2, "type": "tap" },
-    { "time_ms": 4500, "lane": 3, "type": "tap" },
-    { "time_ms": 5100, "lane": 1, "type": "tap" },
-    { "time_ms": 5400, "lane": 0, "type": "tap" },
-    { "time_ms": 5700, "lane": 3, "type": "tap" },
-    { "time_ms": 6000, "lane": 2, "type": "tap" },
-    { "time_ms": 6600, "lane": 0, "type": "tap" },
-    { "time_ms": 6900, "lane": 1, "type": "tap" },
-    { "time_ms": 7200, "lane": 2, "type": "tap" },
-    { "time_ms": 7500, "lane": 3, "type": "tap" },
-    { "time_ms": 8100, "lane": 0, "type": "tap" },
-    { "time_ms": 8400, "lane": 1, "type": "tap" },
-    { "time_ms": 8700, "lane": 2, "type": "tap" },
-    { "time_ms": 9000, "lane": 3, "type": "tap" },
-    { "time_ms": 9300, "lane": 0, "type": "tap" },
-    { "time_ms": 9600, "lane": 2, "type": "tap" },
-    { "time_ms": 9900, "lane": 1, "type": "tap" },
-    { "time_ms": 10200, "lane": 3, "type": "tap" },
-    { "time_ms": 10800, "lane": 0, "type": "tap" },
-    { "time_ms": 11100, "lane": 1, "type": "tap" },
-    { "time_ms": 11400, "lane": 2, "type": "tap" },
-    { "time_ms": 11700, "lane": 3, "type": "tap" },
-    { "time_ms": 12000, "lane": 0, "type": "tap" },
-    { "time_ms": 12500, "lane": 2, "type": "tap" },
-    { "time_ms": 13000, "lane": 1, "type": "tap" },
-    { "time_ms": 13500, "lane": 3, "type": "tap" },
-    { "time_ms": 14000, "lane": 0, "type": "tap" },
-    { "time_ms": 14500, "lane": 1, "type": "tap" },
-    { "time_ms": 15000, "lane": 2, "type": "tap" },
-    { "time_ms": 15500, "lane": 3, "type": "tap" },
-    { "time_ms": 16000, "lane": 0, "type": "tap" },
-    { "time_ms": 16500, "lane": 2, "type": "tap" },
-    { "time_ms": 17000, "lane": 1, "type": "tap" },
-    { "time_ms": 17500, "lane": 3, "type": "tap" },
-    { "time_ms": 18000, "lane": 0, "type": "tap" },
-    { "time_ms": 18500, "lane": 1, "type": "tap" },
-    { "time_ms": 19000, "lane": 2, "type": "tap" },
-    { "time_ms": 19500, "lane": 3, "type": "tap" },
-    { "time_ms": 20000, "lane": 0, "type": "tap" },
-    { "time_ms": 20500, "lane": 2, "type": "tap" },
-    { "time_ms": 21000, "lane": 1, "type": "tap" },
-    { "time_ms": 21500, "lane": 3, "type": "tap" },
-    { "time_ms": 22000, "lane": 1, "type": "tap" },
-    { "time_ms": 22600, "lane": 2, "type": "tap" },
-    { "time_ms": 23200, "lane": 3, "type": "tap" },
-    { "time_ms": 23800, "lane": 0, "type": "tap" },
-    { "time_ms": 24400, "lane": 1, "type": "tap" },
-    { "time_ms": 25000, "lane": 2, "type": "tap" },
-    { "time_ms": 25600, "lane": 3, "type": "tap" }
+    {
+      "time_ms": 3897,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 4326,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 4754,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 5183,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 5611,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 6040,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 6469,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 6897,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 7326,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 7754,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 8183,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 8611,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 9040,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 9469,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 9897,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 10326,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 10754,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 11183,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 11611,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 12040,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 12469,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 12897,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 13326,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 14143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 14571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 15000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 15429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 15857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 16286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 16714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 17143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 17571,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 18000,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 18429,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 18857,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 19286,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 19714,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 20143,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 20571,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 21000,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 21429,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 21857,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 22286,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 22714,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 23143,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 23571,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 24000,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 24429,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 24857,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 25286,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 25714,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 26143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 26571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 27000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 27429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 27857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 28286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 28714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 29143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 29571,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 30000,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 30429,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 30857,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 31286,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 31714,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 32143,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 32571,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 33000,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 33429,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 33857,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 34286,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 34714,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 35143,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 35571,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 36000,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 36429,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 36857,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 37286,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 37714,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 38143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 38571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 39000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 39429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 39857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 40286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 40714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 41143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 41571,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 42000,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 42429,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 42857,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 43286,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 43714,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 44143,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 44571,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 45000,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 45429,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 45857,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 46286,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 46714,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 47143,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 47571,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 48000,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 48429,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 48857,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 49286,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 49714,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 50143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 50571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 51000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 51429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 51857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 52286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 52714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 53143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 53571,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 54000,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 54429,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 54857,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 55286,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 55714,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 56143,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 56571,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 57000,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 57429,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 57857,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 58286,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 58714,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 59143,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 59571,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 60000,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 60429,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 60857,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 61286,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 61714,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 62143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 62571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 63000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 63429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 63857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 64286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 64714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 65143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 65571,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 66000,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 66429,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 66857,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 67286,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 67714,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 68143,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 68571,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 69000,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 69429,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 69857,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 70286,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 70714,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 71143,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 71571,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 72000,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 72429,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 72857,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 73286,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 73714,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 74143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 74571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 75000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 75429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 75857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 76286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 76714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 77143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 77571,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 78000,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 78429,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 78857,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 79286,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 79714,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 80143,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 80571,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 81000,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 81429,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 81857,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 82286,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 82714,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 83143,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 83571,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 84000,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 84429,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 84857,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 85286,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 85714,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 86143,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 86571,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 87000,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 87429,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 87857,
+      "lane": 0,
+      "type": "tap"
+    },
+    {
+      "time_ms": 88286,
+      "lane": 3,
+      "type": "tap"
+    },
+    {
+      "time_ms": 88714,
+      "lane": 1,
+      "type": "tap"
+    },
+    {
+      "time_ms": 89143,
+      "lane": 2,
+      "type": "tap"
+    },
+    {
+      "time_ms": 89571,
+      "lane": 0,
+      "type": "tap"
+    }
   ]
 }

@@ -3,9 +3,9 @@
   "songTitle": "no man’s world",
   "artist": "outi de beat",
   "audioFile": "「no man’s world」音羽-otoha-.caf",
-  "offsetMs": 0,
+  "offsetMs": 40,
   "bpm": 140,
-  "durationMs": 60500,
+  "durationMs": 90000,
   "beatsPerMeasure": 4,
   "analysis": {
     "onsetsFile": "no-mans-world_onsets.json"
