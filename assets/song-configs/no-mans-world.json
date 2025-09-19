@@ -1,0 +1,94 @@
+{
+  "songId": "no-mans-world",
+  "songTitle": "no man’s world",
+  "artist": "outi de beat",
+  "audioFile": "「no man’s world」音羽-otoha-.caf",
+  "offsetMs": 0,
+  "bpm": 140,
+  "durationMs": 60500,
+  "beatsPerMeasure": 4,
+  "analysis": {
+    "onsetsFile": "no-mans-world_onsets.json"
+  },
+  "difficulties": [
+    {
+      "difficultyId": "easy_auto",
+      "difficultyName": "かんたん(自動)",
+      "level": 3,
+      "laneCount": 4,
+      "generators": [
+        {
+          "type": "grid",
+          "startBeat": 0,
+          "measures": 4,
+          "subdivision": 1,
+          "pattern": "1",
+          "laneCycle": [0, 1, 2, 3]
+        },
+        {
+          "type": "grid",
+          "startBeat": 16,
+          "measures": 4,
+          "subdivision": 2,
+          "pattern": "10",
+          "laneCycle": [0, 2, 1, 3]
+        },
+        {
+          "type": "fromOnsets",
+          "startBeat": 32,
+          "maxNotes": 32,
+          "laneCycle": [0, 1, 2, 3],
+          "minGapMs": 180
+        }
+      ],
+      "postProcesses": [
+        {
+          "type": "sortByTime"
+        },
+        {
+          "type": "trimToDuration"
+        }
+      ]
+    },
+    {
+      "difficultyId": "normal_auto",
+      "difficultyName": "ふつう(自動)",
+      "level": 6,
+      "laneCount": 4,
+      "generators": [
+        {
+          "type": "grid",
+          "startBeat": 0,
+          "measures": 4,
+          "subdivision": 2,
+          "pattern": "10",
+          "laneCycle": [0, 1, 2, 3]
+        },
+        {
+          "type": "grid",
+          "startBeat": 16,
+          "measures": 4,
+          "subdivision": 4,
+          "pattern": "1000",
+          "laneCycle": [0, 2, 1, 3],
+          "swingMs": 15
+        },
+        {
+          "type": "fromOnsets",
+          "startBeat": 32,
+          "takeEvery": 1,
+          "laneCycle": [0, 3, 1, 2],
+          "minGapMs": 140
+        }
+      ],
+      "postProcesses": [
+        {
+          "type": "sortByTime"
+        },
+        {
+          "type": "trimToDuration"
+        }
+      ]
+    }
+  ]
+}

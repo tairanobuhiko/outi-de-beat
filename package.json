@@ -5,6 +5,8 @@
   "main": "expo/AppEntry",
   "scripts": {
     "prepare": "tsx scripts/generate-song-manifest.ts",
+    "analyze-audio": "node scripts/analyze-audio.js",
+    "generate-beatmap": "node scripts/generate-beatmap.js",
     "start": "expo start",
     "android": "expo run:android",
     "ios": "expo run:ios",
