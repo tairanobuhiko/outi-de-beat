@@ -4,10 +4,10 @@ import { SongManifest } from '@/types/manifest';
 
 export const songManifest: SongManifest = [
   {
-    songId: 'beat_de_tohi',
-    title: 'Beat De Tohi',
+    songId: 'no-mans-world',
+    title: 'no man’s world',
     artist: 'outi de beat',
-    audioModule: require('../../assets/audio/Beat De Tohi.caf') as number,
+    audioModule: require('../../assets/audio/「no man’s world」音羽-otoha-.caf') as number,
     offsetMs: 0,
     previewMs: 12000,
     beatmaps: [
@@ -15,19 +15,19 @@ export const songManifest: SongManifest = [
         difficultyId: 'easy',
         difficultyName: 'かんたん',
         level: 3,
-        module: require('../../assets/beatmaps/beat_de_tohi_easy.json'),
+        module: require('../../assets/beatmaps/no_mans_world_easy.json'),
       },
       {
         difficultyId: 'normal',
         difficultyName: 'ふつう',
         level: 6,
-        module: require('../../assets/beatmaps/beat_de_tohi_normal.json'),
+        module: require('../../assets/beatmaps/no_mans_world_normal.json'),
       },
       {
         difficultyId: 'hard',
         difficultyName: 'むずかしい',
         level: 9,
-        module: require('../../assets/beatmaps/beat_de_tohi_hard.json'),
+        module: require('../../assets/beatmaps/no_mans_world_hard.json'),
       },
     ],
   },
