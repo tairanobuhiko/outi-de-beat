@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RootStackParamList } from '@/navigation/types';
 import { useGame } from '@/providers/GameProvider';
@@ -10,17 +11,22 @@ export function DifficultyScreen({ route, navigation }: DifficultyScreenProps) {
   const { songId } = route.params;
   const { songs, setSelectedDifficulty, getHighScore } = useGame();
   const song = songs.find((item) => item.songId === songId);
+  const insets = useSafeAreaInsets();
+  const containerStyle = [
+    styles.container,
+    { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }
+  ];
 
   if (!song) {
     return (
-      <View style={styles.container}>
+      <View style={containerStyle}>
         <Text style={styles.error}>楽曲情報を読み込めませんでした。</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={containerStyle}>
       <Text style={styles.header}>{song.title}</Text>
       <Text style={styles.artist}>{song.artist}</Text>
       {song.beatmaps.map((beatmap) => {

@@ -308,6 +308,17 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     if (finishedRef.current) {
       return;
     }
+    const checker = checkAutoMissesRef.current;
+    if (!checker) {
+      return;
+    }
+    checker(playbackPosition + latencyRef.current);
+  }, [playbackPosition]);
+
+  useEffect(() => {
+    if (finishedRef.current) {
+      return;
+    }
     if (expectedSongEndPosition === undefined) {
       return;
     }

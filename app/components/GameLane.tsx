@@ -16,7 +16,11 @@ interface GameLaneProps {
 export const GameLane = memo(({ notes, onPress }: GameLaneProps) => {
   // 日本語コメント: Lane 全体でタップを受け取り、ノーツを描画する。
   return (
-    <Pressable style={styles.lane} onPress={onPress}>
+    <Pressable
+      style={styles.lane}
+      android_disableSound
+      onPressIn={onPress}
+    >
       {notes.map((note) => (
         <View
           key={note.id}

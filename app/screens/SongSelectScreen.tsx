@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { RootStackParamList } from '@/navigation/types';
 import { useGame } from '@/providers/GameProvider';
@@ -8,9 +9,15 @@ export type SongSelectScreenProps = NativeStackScreenProps<RootStackParamList, '
 
 export function SongSelectScreen({ navigation }: SongSelectScreenProps) {
   const { songs, setSelectedSong, latencyOffsetMs, updateLatencyOffset } = useGame();
+  const insets = useSafeAreaInsets();
 
   return (
-    <View style={styles.container}>
+    <View
+      style={[
+        styles.container,
+        { paddingTop: insets.top + 24, paddingBottom: insets.bottom + 24 }
+      ]}
+    >
       <Text style={styles.header}>楽曲を選択してください</Text>
       <View style={styles.calibrationCard}>
         <View>
@@ -35,7 +42,7 @@ export function SongSelectScreen({ navigation }: SongSelectScreenProps) {
       </View>
       <FlatList
         data={songs}
-        contentContainerStyle={styles.listContent}
+        contentContainerStyle={[styles.listContent, { paddingBottom: 32 + insets.bottom }]}
         keyExtractor={(item) => item.songId}
         renderItem={({ item }) => (
           <Pressable
