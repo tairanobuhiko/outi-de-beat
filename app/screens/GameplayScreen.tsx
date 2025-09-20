@@ -5,13 +5,16 @@ import type { AVPlaybackStatus } from 'expo-av';
 import * as Haptics from 'expo-haptics';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { GameLane } from '@/components/GameLane';
 import { GameplayHud } from '@/components/GameplayHud';
+import { ResultOverlay } from '@/components/ResultOverlay';
+import { getSongConfig } from '@/constants/songConfigs';
 import { JUDGMENT_WINDOWS_MS } from '@/constants/score';
 import { buildEmptyJudgmentMap, calculateJudgmentScore, determineJudgment, parseBeatmap } from '@/utils/beatmap';
 import { RootStackParamList } from '@/navigation/types';
-import { useGame } from '@/providers/GameProvider';
+import { GameResultPayload, useGame } from '@/providers/GameProvider';
 import { Judgment } from '@/types/beatmap';
 
 export type GameplayScreenProps = NativeStackScreenProps<RootStackParamList, 'Gameplay'>;
@@ -25,15 +28,26 @@ interface RuntimeNote {
   status: 'pending' | 'hit' | 'missed';
 }
 
+interface ResultState extends GameResultPayload {
+  isNewRecord: boolean;
+}
+
 const LANE_COUNT = 4;
 const VISIBLE_WINDOW_MS = 2200;
 const POST_HIT_WINDOW_MS = 120;
+const TAP_SOUND_POOL_INITIAL = 3;
+const TAP_SOUND_POOL_MAX = 6;
+const SONG_COMPLETION_GRACE_MS = 750;
+const TAP_SOUND_MODULE = require('../../assets/audio/fx/tamp.mp3') as number;
+const RESULT_SOUND_MODULE = require('../../assets/audio/fx/applause1.mp3') as number;
 
 export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   const { songId, difficultyId } = route.params;
-  const { songs, latencyOffsetMs, recordResult } = useGame();
+  const { songs, latencyOffsetMs, recordResult, getHighScore } = useGame();
   const song = songs.find((item) => item.songId === songId);
   const beatmapEntry = song?.beatmaps.find((item) => item.difficultyId === difficultyId);
+  const insets = useSafeAreaInsets();
+  const songConfig = useMemo(() => getSongConfig(songId), [songId]);
 
   const [status, setStatus] = useState<RuntimeStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | undefined>();
@@ -45,8 +59,13 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   const [maxCombo, setMaxCombo] = useState(0);
   const [score, setScore] = useState(0);
   const [notes, setNotes] = useState<RuntimeNote[]>([]);
+  const [resultData, setResultData] = useState<ResultState | null>(null);
 
   const soundRef = useRef<Audio.Sound | null>(null);
+  const tapSoundPoolRef = useRef<Audio.Sound[]>([]);
+  const tapSoundBusyRef = useRef<boolean[]>([]);
+  const tapFxMountedRef = useRef(true);
+  const resultSoundRef = useRef<Audio.Sound | null>(null);
   const notesRef = useRef<RuntimeNote[]>([]);
   const finishedRef = useRef(false);
   const latencyRef = useRef(latencyOffsetMs);
@@ -55,10 +74,96 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   const playbackUpdateHandlerRef = useRef<(status: AVPlaybackStatus) => void>();
   const fallbackTimerRef = useRef<number | null>(null);
   const startTimestampRef = useRef<number | null>(null);
+  const expectedSongEndPosition = useMemo(() => {
+    if (!songConfig) {
+      return undefined;
+    }
+    const baseOffset = typeof songConfig.offsetMs === 'number' ? songConfig.offsetMs : 0;
+    return baseOffset + songConfig.durationMs;
+  }, [songConfig]);
+
+  const createTapSoundInstance = useCallback(async (index: number) => {
+    const { sound } = await Audio.Sound.createAsync(TAP_SOUND_MODULE, {
+      shouldPlay: false
+    });
+    sound.setOnPlaybackStatusUpdate((status) => {
+      if (!status.isLoaded) {
+        return;
+      }
+      if (status.didJustFinish) {
+        tapSoundBusyRef.current[index] = false;
+        void sound.setPositionAsync(0).catch(() => undefined);
+      }
+    });
+    return sound;
+  }, []);
 
   useEffect(() => {
     latencyRef.current = latencyOffsetMs;
   }, [latencyOffsetMs]);
+
+  useEffect(() => {
+    tapFxMountedRef.current = true;
+
+    const initializeTapPool = async () => {
+      const pool: Audio.Sound[] = [];
+      const busy: boolean[] = [];
+      for (let index = 0; index < TAP_SOUND_POOL_INITIAL; index += 1) {
+        try {
+          const instance = await createTapSoundInstance(index);
+          if (!tapFxMountedRef.current) {
+            await instance.unloadAsync().catch(() => undefined);
+            return;
+          }
+          pool.push(instance);
+          busy.push(false);
+        } catch (error) {
+          console.warn('タップ効果音の初期化に失敗しました', error);
+          break;
+        }
+      }
+      if (!tapFxMountedRef.current) {
+        await Promise.all(pool.map((sound) => sound.unloadAsync().catch(() => undefined)));
+        return;
+      }
+      tapSoundPoolRef.current = pool;
+      tapSoundBusyRef.current = busy;
+    };
+
+    const loadResultFx = async () => {
+      try {
+        const { sound } = await Audio.Sound.createAsync(RESULT_SOUND_MODULE, {
+          shouldPlay: false
+        });
+        if (!tapFxMountedRef.current) {
+          await sound.unloadAsync().catch(() => undefined);
+          return;
+        }
+        resultSoundRef.current = sound;
+      } catch (error) {
+        console.warn('リザルト効果音の読み込みに失敗しました', error);
+      }
+    };
+
+    void initializeTapPool();
+    void loadResultFx();
+
+    return () => {
+      tapFxMountedRef.current = false;
+      const pool = tapSoundPoolRef.current;
+      tapSoundPoolRef.current = [];
+      tapSoundBusyRef.current = [];
+      pool.forEach((sound) => {
+        sound.setOnPlaybackStatusUpdate(undefined);
+        void sound.unloadAsync().catch(() => undefined);
+      });
+      if (resultSoundRef.current) {
+        resultSoundRef.current.setOnPlaybackStatusUpdate(undefined);
+        void resultSoundRef.current.unloadAsync().catch(() => undefined);
+        resultSoundRef.current = null;
+      }
+    };
+  }, [createTapSoundInstance]);
 
   const finishGame = useCallback(async () => {
     if (finishedRef.current) {
@@ -66,26 +171,33 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     }
     finishedRef.current = true;
     setStatus('finished');
+    if (fallbackTimerRef.current !== null) {
+      clearInterval(fallbackTimerRef.current as unknown as number);
+      fallbackTimerRef.current = null;
+      startTimestampRef.current = null;
+    }
     await soundRef.current?.stopAsync().catch(() => undefined);
 
-    const payload = {
+    const summary: GameResultPayload['judgments'] = { ...judgments };
+    const payload: GameResultPayload = {
       score,
       maxCombo,
-      judgments
+      judgments: summary
     };
+    const previousHighScore = getHighScore(songId, difficultyId);
+    const isNewRecord = !previousHighScore || payload.score >= previousHighScore.score;
+
+    setResultData({ ...payload, isNewRecord });
+
+    const applause = resultSoundRef.current;
+    if (applause) {
+      void applause.replayAsync().catch(() => undefined);
+    }
 
     void recordResult(songId, difficultyId, payload).catch((error) => {
       console.warn('結果保存に失敗しました', error);
     });
-
-    navigation.replace('Result', {
-      songId,
-      difficultyId,
-      score: payload.score,
-      judgments: payload.judgments,
-      maxCombo: payload.maxCombo
-    });
-  }, [difficultyId, judgments, maxCombo, navigation, recordResult, score, songId]);
+  }, [difficultyId, getHighScore, judgments, maxCombo, recordResult, score, songId]);
 
   const checkCompletion = useCallback(() => {
     if (finishedRef.current) {
@@ -191,11 +303,84 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     playbackUpdateHandlerRef.current = handlePlaybackStatusUpdate;
   }, [handlePlaybackStatusUpdate]);
 
+  useEffect(() => {
+    if (finishedRef.current) {
+      return;
+    }
+    if (expectedSongEndPosition === undefined) {
+      return;
+    }
+    if (playbackPosition >= expectedSongEndPosition + SONG_COMPLETION_GRACE_MS) {
+      const handler = finishGameRef.current;
+      if (handler) {
+        void handler();
+      }
+    }
+  }, [expectedSongEndPosition, playbackPosition]);
+
+  const playTapSound = useCallback(() => {
+    const trigger = async () => {
+      if (!tapFxMountedRef.current) {
+        return;
+      }
+      const pool = tapSoundPoolRef.current;
+      const busy = tapSoundBusyRef.current;
+
+      let targetIndex = -1;
+      for (let index = 0; index < pool.length; index += 1) {
+        if (!busy[index]) {
+          targetIndex = index;
+          break;
+        }
+      }
+
+      if (targetIndex === -1 && pool.length < TAP_SOUND_POOL_MAX) {
+        const newIndex = pool.length;
+        try {
+          const instance = await createTapSoundInstance(newIndex);
+          if (!tapFxMountedRef.current) {
+            await instance.unloadAsync().catch(() => undefined);
+            return;
+          }
+          pool.push(instance);
+          busy.push(false);
+          targetIndex = newIndex;
+        } catch (error) {
+          console.warn('タップ効果音インスタンス生成に失敗しました', error);
+          return;
+        }
+      }
+
+      if (targetIndex === -1 && pool.length > 0) {
+        targetIndex = 0;
+        await pool[targetIndex].stopAsync().catch(() => undefined);
+        busy[targetIndex] = false;
+      }
+
+      if (targetIndex === -1) {
+        return;
+      }
+
+      const targetSound = pool[targetIndex];
+      busy[targetIndex] = true;
+      try {
+        await targetSound.setPositionAsync(0);
+        await targetSound.playAsync();
+      } catch (error) {
+        busy[targetIndex] = false;
+        console.warn('タップ効果音の再生に失敗しました', error);
+      }
+    };
+
+    void trigger();
+  }, [createTapSoundInstance]);
+
   const handleLanePress = useCallback(
     (laneIndex: number) => {
       if (status !== 'playing') {
         return;
       }
+      playTapSound();
       const effectiveTime = playbackPosition + latencyRef.current;
       console.log('DEBUG handleLanePress:', { laneIndex, effectiveTime });
       let bestIndex: number | undefined;
@@ -220,7 +405,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
         applyJudgment(judgment, bestIndex);
       }
     },
-    [applyJudgment, playbackPosition, status]
+    [applyJudgment, playbackPosition, status, playTapSound]
   );
 
   useEffect(() => {
@@ -233,6 +418,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     setStatus('loading');
     finishedRef.current = false;
     setPlaybackPosition(0);
+    setResultData(null);
 
     const setup = async () => {
       try {
@@ -381,7 +567,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
 
   if (status === 'error') {
     return (
-      <View style={styles.centered}>
+      <View style={[styles.centered, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <Text style={styles.error}>{errorMessage ?? 'エラーが発生しました。'}</Text>
       </View>
     );
@@ -389,14 +575,14 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
 
   if (!song || !beatmapEntry) {
     return (
-      <View style={styles.centered}>
+      <View style={[styles.centered, { paddingTop: insets.top, paddingBottom: insets.bottom }]}>
         <Text style={styles.error}>譜面情報が見つかりませんでした。</Text>
       </View>
     );
   }
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, { paddingTop: insets.top }]}>
       <GameplayHud
         score={score}
         combo={combo}
@@ -405,7 +591,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
         lastJudgment={lastJudgment}
       />
       <View
-        style={styles.playfield}
+        style={[styles.playfield, { paddingBottom: 32 + insets.bottom }]}
         onLayout={(event) => {
             const h = event.nativeEvent.layout.height;
             console.log('DEBUG playfield height:', h);
@@ -428,6 +614,16 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
           <ActivityIndicator color="#ffffff" />
           <Text style={styles.loadingText}>読み込み中...</Text>
         </View>
+      )}
+      {resultData && (
+        <ResultOverlay
+          score={resultData.score}
+          maxCombo={resultData.maxCombo}
+          judgments={resultData.judgments}
+          isNewRecord={resultData.isNewRecord}
+          onReplay={() => navigation.replace('Gameplay', { songId, difficultyId })}
+          onReturn={() => navigation.navigate('SongSelect')}
+        />
       )}
     </View>
   );
