@@ -35,8 +35,8 @@ interface ResultState extends GameResultPayload {
 const LANE_COUNT = 4;
 const VISIBLE_WINDOW_MS = 2200;
 const POST_HIT_WINDOW_MS = 120;
-const TAP_SOUND_POOL_INITIAL = 3;
-const TAP_SOUND_POOL_MAX = 6;
+const TAP_SOUND_INITIAL_VOICES = 4;
+const TAP_SOUND_VOICE_LIMIT = 12;
 const SONG_COMPLETION_GRACE_MS = 750;
 const TAP_SOUND_MODULE = require('../../assets/audio/fx/tamp.wav') as number;
 const RESULT_SOUND_MODULE = require('../../assets/audio/fx/applause1.mp3') as number;
@@ -62,8 +62,9 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   const [resultData, setResultData] = useState<ResultState | null>(null);
 
   const soundRef = useRef<Audio.Sound | null>(null);
-  const tapSoundPoolRef = useRef<Audio.Sound[]>([]);
-  const tapSoundBusyRef = useRef<boolean[]>([]);
+  const tapVoicesRef = useRef<Audio.Sound[]>([]);
+  const tapVoiceBusyRef = useRef<boolean[]>([]);
+  const tapVoiceStartedAtRef = useRef<number[]>([]);
   const tapFxMountedRef = useRef(true);
   const resultSoundRef = useRef<Audio.Sound | null>(null);
   const notesRef = useRef<RuntimeNote[]>([]);
@@ -82,20 +83,33 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     return baseOffset + songConfig.durationMs;
   }, [songConfig]);
 
-  const createTapSoundInstance = useCallback(async (index: number) => {
+  const createTapVoice = useCallback(async () => {
+    if (!tapFxMountedRef.current) {
+      throw new Error('tap FX has been unmounted');
+    }
     const { sound } = await Audio.Sound.createAsync(TAP_SOUND_MODULE, {
       shouldPlay: false
     });
+    if (!tapFxMountedRef.current) {
+      sound.setOnPlaybackStatusUpdate(undefined);
+      await sound.unloadAsync().catch(() => undefined);
+      throw new Error('tap FX has been unmounted');
+    }
+    const voiceIndex = tapVoicesRef.current.length;
+    tapVoicesRef.current.push(sound);
+    tapVoiceBusyRef.current.push(false);
+    tapVoiceStartedAtRef.current.push(0);
     sound.setOnPlaybackStatusUpdate((status) => {
       if (!status.isLoaded) {
         return;
       }
       if (status.didJustFinish) {
-        tapSoundBusyRef.current[index] = false;
+        tapVoiceBusyRef.current[voiceIndex] = false;
         void sound.setPositionAsync(0).catch(() => undefined);
+        tapVoiceStartedAtRef.current[voiceIndex] = 0;
       }
     });
-    return sound;
+    return voiceIndex;
   }, []);
 
   useEffect(() => {
@@ -105,29 +119,15 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   useEffect(() => {
     tapFxMountedRef.current = true;
 
-    const initializeTapPool = async () => {
-      const pool: Audio.Sound[] = [];
-      const busy: boolean[] = [];
-      for (let index = 0; index < TAP_SOUND_POOL_INITIAL; index += 1) {
-        try {
-          const instance = await createTapSoundInstance(index);
-          if (!tapFxMountedRef.current) {
-            await instance.unloadAsync().catch(() => undefined);
-            return;
-          }
-          pool.push(instance);
-          busy.push(false);
-        } catch (error) {
+    const loadTapVoices = async () => {
+      const tasks: Promise<void>[] = [];
+      for (let count = 0; count < TAP_SOUND_INITIAL_VOICES; count += 1) {
+        const task = createTapVoice().catch((error) => {
           console.warn('タップ効果音の初期化に失敗しました', error);
-          break;
-        }
+        });
+        tasks.push(task);
       }
-      if (!tapFxMountedRef.current) {
-        await Promise.all(pool.map((sound) => sound.unloadAsync().catch(() => undefined)));
-        return;
-      }
-      tapSoundPoolRef.current = pool;
-      tapSoundBusyRef.current = busy;
+      await Promise.all(tasks);
     };
 
     const loadResultFx = async () => {
@@ -145,15 +145,16 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
       }
     };
 
-    void initializeTapPool();
+    void loadTapVoices();
     void loadResultFx();
 
     return () => {
       tapFxMountedRef.current = false;
-      const pool = tapSoundPoolRef.current;
-      tapSoundPoolRef.current = [];
-      tapSoundBusyRef.current = [];
-      pool.forEach((sound) => {
+      const voices = tapVoicesRef.current;
+      tapVoicesRef.current = [];
+      tapVoiceBusyRef.current = [];
+      tapVoiceStartedAtRef.current = [];
+      voices.forEach((sound) => {
         sound.setOnPlaybackStatusUpdate(undefined);
         void sound.unloadAsync().catch(() => undefined);
       });
@@ -163,7 +164,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
         resultSoundRef.current = null;
       }
     };
-  }, [createTapSoundInstance]);
+  }, [createTapVoice]);
 
   const finishGame = useCallback(async () => {
     if (finishedRef.current) {
@@ -319,61 +320,59 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   }, [expectedSongEndPosition, playbackPosition]);
 
   const playTapSound = useCallback(() => {
+    if (!tapFxMountedRef.current) {
+      return;
+    }
+
     const trigger = async () => {
-      if (!tapFxMountedRef.current) {
-        return;
-      }
-      const pool = tapSoundPoolRef.current;
-      const busy = tapSoundBusyRef.current;
+      let targetIndex = tapVoiceBusyRef.current.findIndex((busy) => !busy);
 
-      let targetIndex = -1;
-      for (let index = 0; index < pool.length; index += 1) {
-        if (!busy[index]) {
-          targetIndex = index;
-          break;
-        }
-      }
-
-      if (targetIndex === -1 && pool.length < TAP_SOUND_POOL_MAX) {
-        const newIndex = pool.length;
+      if (targetIndex === -1 && tapVoicesRef.current.length < TAP_SOUND_VOICE_LIMIT) {
         try {
-          const instance = await createTapSoundInstance(newIndex);
-          if (!tapFxMountedRef.current) {
-            await instance.unloadAsync().catch(() => undefined);
-            return;
-          }
-          pool.push(instance);
-          busy.push(false);
-          targetIndex = newIndex;
+          targetIndex = await createTapVoice();
         } catch (error) {
-          console.warn('タップ効果音インスタンス生成に失敗しました', error);
+          console.warn('タップ効果音の追加生成に失敗しました', error);
           return;
         }
       }
 
-      if (targetIndex === -1 && pool.length > 0) {
-        targetIndex = 0;
-        await pool[targetIndex].stopAsync().catch(() => undefined);
-        busy[targetIndex] = false;
-      }
-
       if (targetIndex === -1) {
-        return;
+        // 全ボイスが再生中の場合は最も古く再生されたボイスを再利用する。
+        const startedAt = tapVoiceStartedAtRef.current;
+        let oldestIndex = 0;
+        let oldestValue = Number.POSITIVE_INFINITY;
+        startedAt.forEach((value, index) => {
+          if (value !== 0 && value < oldestValue) {
+            oldestValue = value;
+            oldestIndex = index;
+          }
+        });
+        targetIndex = oldestValue === Number.POSITIVE_INFINITY ? 0 : oldestIndex;
+        try {
+          await tapVoicesRef.current[targetIndex].stopAsync();
+        } catch (error) {
+          console.warn('タップ効果音の停止に失敗しました', error);
+        }
+        tapVoiceBusyRef.current[targetIndex] = false;
+        tapVoiceStartedAtRef.current[targetIndex] = 0;
       }
 
-      const targetSound = pool[targetIndex];
-      busy[targetIndex] = true;
+      const voice = tapVoicesRef.current[targetIndex];
+      tapVoiceBusyRef.current[targetIndex] = true;
+
       try {
-        await targetSound.setPositionAsync(0);
-        await targetSound.playAsync();
+        await voice.setPositionAsync(0);
+        tapVoiceStartedAtRef.current[targetIndex] = Date.now();
+        await voice.playAsync();
       } catch (error) {
-        busy[targetIndex] = false;
+        tapVoiceBusyRef.current[targetIndex] = false;
+        tapVoiceStartedAtRef.current[targetIndex] = 0;
         console.warn('タップ効果音の再生に失敗しました', error);
       }
     };
 
     void trigger();
-  }, [createTapSoundInstance]);
+  }, [createTapVoice]);
 
   const handleLanePress = useCallback(
     (laneIndex: number) => {
