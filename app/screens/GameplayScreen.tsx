@@ -38,7 +38,7 @@ const POST_HIT_WINDOW_MS = 120;
 const TAP_SOUND_POOL_INITIAL = 3;
 const TAP_SOUND_POOL_MAX = 6;
 const SONG_COMPLETION_GRACE_MS = 750;
-const TAP_SOUND_MODULE = require('../../assets/audio/fx/tamp.mp3') as number;
+const TAP_SOUND_MODULE = require('../../assets/audio/fx/tamp.wav') as number;
 const RESULT_SOUND_MODULE = require('../../assets/audio/fx/applause1.mp3') as number;
 
 export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
