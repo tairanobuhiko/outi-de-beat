@@ -1,5 +1,5 @@
-import { memo } from 'react';
-import { Pressable, StyleSheet, View } from 'react-native';
+import { memo, useCallback } from 'react';
+import { GestureResponderEvent, StyleSheet, View } from 'react-native';
 
 interface VisibleNote {
   id: string;
@@ -14,12 +14,18 @@ interface GameLaneProps {
 }
 
 export const GameLane = memo(({ notes, onPress }: GameLaneProps) => {
-  // 日本語コメント: Lane 全体でタップを受け取り、ノーツを描画する。
+  // 日本語コメント: Lane 全体でタップを受け取り、マルチタッチでも即座に判定する。
+  const handleTouchStart = useCallback((event: GestureResponderEvent) => {
+    if (event.nativeEvent.touches.length > 0) {
+      onPress();
+    }
+  }, [onPress]);
+
   return (
-    <Pressable
+    <View
       style={styles.lane}
-      android_disableSound
-      onPressIn={onPress}
+      onTouchStart={handleTouchStart}
+      onStartShouldSetResponder={() => true}
     >
       {notes.map((note) => (
         <View
@@ -33,7 +39,7 @@ export const GameLane = memo(({ notes, onPress }: GameLaneProps) => {
         />
       ))}
       <View style={styles.judgmentLine} />
-    </Pressable>
+    </View>
   );
 });
 
