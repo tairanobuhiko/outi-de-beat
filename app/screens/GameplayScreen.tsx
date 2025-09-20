@@ -68,6 +68,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
   const tapFxMountedRef = useRef(true);
   const resultSoundRef = useRef<Audio.Sound | null>(null);
   const notesRef = useRef<RuntimeNote[]>([]);
+  const noPendingNotesRef = useRef(false);
   const finishedRef = useRef(false);
   const latencyRef = useRef(latencyOffsetMs);
   const finishGameRef = useRef<(() => Promise<void>) | null>(null);
@@ -206,9 +207,12 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     }
     const remaining = notesRef.current.some((note) => note.status === 'pending');
     if (!remaining) {
-      void finishGame();
+      noPendingNotesRef.current = true;
+      if (expectedSongEndPosition === undefined) {
+        void finishGame();
+      }
     }
-  }, [finishGame]);
+  }, [expectedSongEndPosition, finishGame]);
 
   const applyJudgment = useCallback((judgment: Judgment, noteIndex?: number) => {
     if (typeof noteIndex === 'number') {
@@ -320,6 +324,9 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
       return;
     }
     if (expectedSongEndPosition === undefined) {
+      return;
+    }
+    if (!noPendingNotesRef.current) {
       return;
     }
     if (playbackPosition >= expectedSongEndPosition + SONG_COMPLETION_GRACE_MS) {
@@ -440,6 +447,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
           hitTime: note.time_ms + beatmap.offset_ms,
           status: 'pending'
         }));
+        noPendingNotesRef.current = false;
         setNotes([...notesRef.current]);
 
         const { sound } = await Audio.Sound.createAsync(song.audioModule, {

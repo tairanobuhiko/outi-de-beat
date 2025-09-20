@@ -987,26 +987,6 @@
       "time_ms": 87857,
       "lane": 0,
       "type": "tap"
-    },
-    {
-      "time_ms": 88286,
-      "lane": 3,
-      "type": "tap"
-    },
-    {
-      "time_ms": 88714,
-      "lane": 1,
-      "type": "tap"
-    },
-    {
-      "time_ms": 89143,
-      "lane": 2,
-      "type": "tap"
-    },
-    {
-      "time_ms": 89571,
-      "lane": 0,
-      "type": "tap"
     }
   ]
 }
