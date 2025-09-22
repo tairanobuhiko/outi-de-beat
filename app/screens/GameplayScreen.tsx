@@ -237,7 +237,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
     });
 
     if (judgment === 'PERFECT') {
-      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Heavy);
     } else if (judgment === 'GREAT') {
       void Haptics.selectionAsync();
     }
@@ -397,6 +397,7 @@ export function GameplayScreen({ route, navigation }: GameplayScreenProps) {
       if (status !== 'playing') {
         return;
       }
+      void Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
       playTapSound();
       const effectiveTime = playbackPosition + latencyRef.current;
       console.log('DEBUG handleLanePress:', { laneIndex, effectiveTime });
